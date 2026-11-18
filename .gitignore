@@ -8,3 +8,5 @@ dist/
 public/flora/
 public/og.png
 .playwright-mcp/
+.vercel
+.env*
