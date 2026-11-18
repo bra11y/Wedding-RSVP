@@ -1,0 +1,226 @@
+---
+import '../styles/global.css';
+import RsvpForm from '../components/RsvpForm.astro';
+import { wedding } from '../config/wedding';
+import { mapArt } from '../lib/flora';
+
+const [a, b] = wedding.partners;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const img = (n: string) => `${base}flora/${n}.webp`;
+const title = `${a} & ${b} — Wedding Invitation, 20 March 2027`;
+const description = `You're invited to celebrate ${a} & ${b}. ${wedding.dateLabel}. Please RSVP by ${wedding.rsvpBy}.`;
+const ogImage = new URL(`${base}og.png`, Astro.site).href;
+
+const fmt = (d: string) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+const calUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(`${a} & ${b} — Wedding`) +
+  '&dates=' + fmt(wedding.start) + '/' + fmt(wedding.end) + '&location=' + encodeURIComponent(wedding.venue.full);
+
+const newTab = '<span class="sr-only"> (opens in a new tab)</span>';
+const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17L17 7M9 7h8v8"/></svg>';
+const copyIcon = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h8"/></svg>';
+const chev = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg>';
+---
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta name="theme-color" content="#fbf5ee" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={`${a} & ${b} are getting married`} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:alt" content={`${a} and ${b}'s wedding invitation, framed by daisies and lavender`} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@400;500&display=swap" />
+  <link rel="preload" as="image" href={img('door-left')} fetchpriority="high" />
+  <link rel="preload" as="image" href={img('door-right')} fetchpriority="high" />
+  <!-- Progressive enhancement: the gate + staged reveal only exist when JS runs.
+       Without JS the invitation is simply readable. -->
+  <script is:inline>document.documentElement.classList.add('js','pre','locked')</script>
+</head>
+<body>
+  <a class="skip" href="#main" id="skip">Skip the opening and go to the invitation</a>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="fog" id="fog" aria-hidden="true"></div>
+  <div class="bloom" id="bloom" aria-hidden="true"></div>
+
+  <!-- ═════════ GATEFOLD ═════════ -->
+  <div class="gate" id="gate">
+    <div class="light" aria-hidden="true"></div>
+    <div class="door left" aria-hidden="true" style={`background-image:url(${img('door-left')}),var(--door-paper)`}><div class="band"></div><div class="keyline"></div></div>
+    <div class="door right" aria-hidden="true" style={`background-image:url(${img('door-right')}),var(--door-paper)`}><div class="band"></div><div class="keyline"></div></div>
+    <div class="seamglow" aria-hidden="true"></div>
+    <svg class="bow" viewBox="0 0 300 270" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="satinL" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fdf9f0"/><stop offset=".45" stop-color="#f1e5cd"/><stop offset=".7" stop-color="#fbf5e8"/><stop offset="1" stop-color="#e7d8b9"/></linearGradient>
+        <linearGradient id="satinR" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fdf9f0"/><stop offset=".45" stop-color="#f1e5cd"/><stop offset=".7" stop-color="#fbf5e8"/><stop offset="1" stop-color="#e7d8b9"/></linearGradient>
+        <linearGradient id="tail" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#efe2c8"/><stop offset=".5" stop-color="#fcf7ec"/><stop offset="1" stop-color="#eadcbf"/></linearGradient>
+      </defs>
+      <path class="tailL" d="M142 112 C120 160 92 205 58 258 L72 250 L84 262 L100 252 C122 205 146 162 158 116 Z" fill="url(#tail)" stroke="#d8c7a4" stroke-width=".8"/>
+      <path class="tailR" d="M158 112 C180 160 208 205 242 258 L228 250 L216 262 L200 252 C178 205 154 162 142 116 Z" fill="url(#tail)" stroke="#d8c7a4" stroke-width=".8"/>
+      <g class="loopL"><path d="M150 100 C112 46 28 28 22 82 C17 128 104 132 150 100 Z" fill="url(#satinL)" stroke="#d8c7a4" stroke-width=".8"/><path d="M140 96 C110 70 62 62 46 84" fill="none" stroke="#d9c8a6" stroke-width="1.2" opacity=".8"/><path d="M140 104 C112 118 70 120 40 106" fill="none" stroke="#e2d3b3" stroke-width="1" opacity=".7"/></g>
+      <g class="loopR"><path d="M150 100 C188 46 272 28 278 82 C283 128 196 132 150 100 Z" fill="url(#satinR)" stroke="#d8c7a4" stroke-width=".8"/><path d="M160 96 C190 70 238 62 254 84" fill="none" stroke="#d9c8a6" stroke-width="1.2" opacity=".8"/><path d="M160 104 C188 118 230 120 260 106" fill="none" stroke="#e2d3b3" stroke-width="1" opacity=".7"/></g>
+      <g class="knot"><rect x="132" y="82" width="36" height="38" rx="12" fill="#f4ead6" stroke="#d3c19c" stroke-width=".9"/><path d="M138 90 C146 98 154 98 162 90 M138 112 C146 104 154 104 162 112" stroke="#dccbaa" stroke-width="1" fill="none"/></g>
+    </svg>
+    <button class="gate-btn" id="gateBtn" type="button">
+      <span class="tap"><span class="mono" aria-hidden="true">{wedding.monogram}</span><span>Tap to open</span><span class="sr-only"> the invitation from {a} and {b}</span></span>
+    </button>
+  </div>
+
+  <button class="music" id="music" type="button" aria-pressed="false" aria-label="Background music">
+    <svg class="on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor" stroke="none"/><path d="M16 9a4 4 0 010 6M18.5 6.5a7.5 7.5 0 010 11"/></svg>
+    <svg class="off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor" stroke="none"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+  </button>
+
+  <!-- ═════════ PAGE ═════════ -->
+  <main class="page" id="main" tabindex="-1">
+
+    <section class="hero" id="top" aria-labelledby="couple">
+      <img class="wild step" src={img('hero')} alt="" width="704" height="1440" decoding="async" fetchpriority="high" data-at="frame" />
+      <p class="std step" data-at="std">Save the date</p>
+      <h1 id="couple" tabindex="-1">
+        <span class="nm step" data-at="n1">{a}</span>
+        <span class="amp step" data-at="amp">&amp;</span>
+        <span class="nm step" data-at="n2">{b}</span>
+      </h1>
+      <p class="kicker step" data-at="kick">We're getting married!</p>
+      <p class="date step" data-at="date">{wedding.dateLabel}</p>
+      <a class="pill step" data-at="pill" href="#rsvp">Respond to invitation
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M6 9l6 6 6-6"/></svg></a>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-count">
+      <img class="sprig r" src={img('sprig-1')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-hourglass')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-count">To the big day</h2>
+      <div class="count" id="count" data-start={wedding.start}>
+        <div><div class="n" data-unit="d">—</div><div class="l">Days</div></div>
+        <div><div class="n" data-unit="h">—</div><div class="l">Hours</div></div>
+        <div><div class="n" data-unit="m">—</div><div class="l">Minutes</div></div>
+        <div><div class="n" data-unit="s">—</div><div class="l">Seconds</div></div>
+      </div>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-venue">
+      <img class="sprig l" src={img('sprig-2')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-arbour')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-venue">The Venue</h2>
+      <p class="sub">Where we'll celebrate our love</p>
+      <p class="venue-name">{wedding.venue.name}</p>
+      <p class="venue-meta">{wedding.venue.address}<br />{wedding.venue.hours}</p>
+      <div class="map" aria-hidden="true"><svg viewBox="0 0 360 200" focusable="false" set:html={mapArt}></svg></div>
+      <div class="btns">
+        <a class="ghost" href={wedding.venue.mapsUrl} target="_blank" rel="noopener">Open in Maps<Fragment set:html={newTab + arrow} /></a>
+        <a class="ghost" href={calUrl} target="_blank" rel="noopener">Add to calendar<Fragment set:html={newTab} /><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></a>
+      </div>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-sched">
+      <img class="sprig r" src={img('sprig-3')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-cake')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-sched">Schedule</h2>
+      <p class="sub">Our celebration, step by step</p>
+      <ol class="timeline">
+        {wedding.schedule.map((s) => (
+          <li class="ti">
+            <span class="dot" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d={s.icon} /></svg></span>
+            <p class="t">{s.time}</p><h3>{s.title}</h3><p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-dress">
+      <img class="sprig l" src={img('sprig-4')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-outfits')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-dress">Dress Code</h2>
+      <p class="sub">{wedding.dressCode.summary}</p>
+      <p class="body">{wedding.dressCode.text}</p>
+      <ul class="swatches" aria-label="Suggested colours">
+        {wedding.dressCode.colours.map((c) => (
+          <li><span class="sw" style={`background:${c.hex}`} aria-hidden="true"></span>{c.name}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-stay">
+      <img class="sprig r" src={img('sprig-5')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-suitcase')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-stay">Accommodation</h2>
+      <p class="sub">For guests travelling in, here are a few nearby places to stay.</p>
+      {wedding.hotels.map((h) => (
+        <div class="card"><h3>{h.name}</h3><p>{h.text}</p><p class="addr">{h.address}</p>
+          <a class="ghost" href={h.mapsUrl} target="_blank" rel="noopener">Open in Maps<span class="sr-only"> for {h.name}</span><Fragment set:html={newTab + arrow} /></a></div>
+      ))}
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-gifts">
+      <img class="sprig l" src={img('sprig-6')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-giftbox')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-gifts">Gifts</h2>
+      <p class="sub">Your presence is the most important thing to us. If you wish to give us a gift, you can do so in any way that suits you best.</p>
+      <div class="card">
+        <h3>Bank transfer</h3>
+        <p>If bank transfer is easiest for you, please use the account details below.</p>
+        <ul class="fields">
+          {wedding.bank.map((f) => (
+            <li class="field"><div><p class="k">{f.label}</p><p class="v">{f.value}</p></div>
+              <button class="copy" type="button" data-copy={f.value} data-label={f.label}><span class="sr-only">Copy {f.label.toLowerCase()}</span><Fragment set:html={copyIcon} /></button></li>
+          ))}
+        </ul>
+      </div>
+      <details class="acc">
+        <summary><span class="acc-title">Gift ideas <span class="badge" aria-hidden="true">{wedding.giftIdeas.length}</span><span class="sr-only">({wedding.giftIdeas.length})</span></span><Fragment set:html={chev} /></summary>
+        <ul>{wedding.giftIdeas.map((g) => <li class="idea">{g}</li>)}</ul>
+      </details>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-faq">
+      <img class="sprig r" src={img('sprig-7')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-book')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-faq">Frequently Asked Questions</h2>
+      <p class="sub">Everything you might be wondering</p>
+      <div style="margin-top:22px">
+        {wedding.faqs.map((f) => (
+          <details class="acc"><summary><span class="q">{f.q}</span><Fragment set:html={chev} /></summary><p class="ans">{f.a}</p></details>
+        ))}
+      </div>
+    </section>
+
+    <section class="s reveal" aria-labelledby="h-note">
+      <img class="sprig l" src={img('sprig-8')} alt="" width="240" height="300" loading="lazy" decoding="async" />
+      <img class="illus" src={img('illus-letter')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-note">A Note From Us</h2>
+      <p class="note">{wedding.note}</p>
+      <p class="sign">With love, {a} &amp; {b}</p>
+    </section>
+
+    <section class="s reveal" id="rsvp" aria-labelledby="h-rsvp">
+      <img class="illus" src={img('illus-wreath')} alt="" width="340" height="300" loading="lazy" decoding="async" />
+      <h2 id="h-rsvp">Confirm Your Attendance</h2>
+      <p class="sub">Kindly respond by {wedding.rsvpBy}</p>
+      <RsvpForm />
+    </section>
+  </main>
+
+  <footer>
+    <img class="meadow" src={img('meadow')} alt="" width="704" height="416" loading="lazy" decoding="async" />
+    <p class="names">{a} <i>&amp;</i> {b}</p>
+    <p>{wedding.shortDate}</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    import '../scripts/opening';
+    import '../scripts/page';
+    import '../scripts/rsvp';
+  </script>
+</body>
+</html>

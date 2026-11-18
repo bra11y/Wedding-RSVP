@@ -1,0 +1,71 @@
+---
+import { rsvpFields, type Field } from '../config/rsvp-fields';
+import { wedding } from '../config/wedding';
+
+const show = (f: Field) => (f.showIf ? JSON.stringify(f.showIf) : undefined);
+const describedBy = (f: Field) => [f.hint && `${f.name}-hint`, `${f.name}-error`].filter(Boolean).join(' ');
+const reqText = '(required)';
+const lc = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+const emptyMsg = (f: Field) => f.requiredMessage ?? (
+  f.type === 'radio' || f.type === 'select' || f.type === 'checkbox' ? `Choose an answer for “${f.label}”.` : `Enter your ${lc(f.label)}.`);
+---
+<form class="rsvp" id="rsvpForm" novalidate data-rsvp-by={wedding.rsvpBy}>
+  <p class="req-note">Fields marked “required” must be filled in.</p>
+
+  {rsvpFields.map((f) => (
+    <div class="f" data-field={f.name} data-type={f.type} data-label={f.label} data-required={f.required ? emptyMsg(f) : undefined} data-show-if={show(f)} hidden={!!f.showIf}>
+      {(f.type === 'radio' || f.type === 'checkbox') ? (
+        <fieldset aria-describedby={describedBy(f)} data-group={f.name}>
+          <legend>{f.label} {f.required && <span class="req">{reqText}</span>}</legend>
+          {f.hint && <p class="hint" id={`${f.name}-hint`}>{f.hint}</p>}
+          {f.options.map((o, i) => (
+            <label class="opt">
+              <input type={f.type} name={f.name} value={o.value} id={`${f.name}-${i}`} />
+              {o.label}
+            </label>
+          ))}
+        </fieldset>
+      ) : (
+        <>
+          <label for={f.name}>{f.label} {f.required && <span class="req">{reqText}</span>}</label>
+          {f.hint && <p class="hint" id={`${f.name}-hint`}>{f.hint}</p>}
+          {f.type === 'textarea' ? (
+            <textarea id={f.name} name={f.name} maxlength={f.maxlength} aria-describedby={describedBy(f)} aria-required={f.required ? 'true' : undefined}></textarea>
+          ) : f.type === 'select' ? (
+            <select id={f.name} name={f.name} aria-describedby={describedBy(f)} aria-required={f.required ? 'true' : undefined}>
+              <option value="">Choose an option</option>
+              {f.options.map((o) => <option value={o.value}>{o.label}</option>)}
+            </select>
+          ) : (
+            <input
+              type={f.type} id={f.name} name={f.name} maxlength={f.maxlength}
+              autocomplete={f.autocomplete} aria-describedby={describedBy(f)}
+              aria-required={f.required ? 'true' : undefined}
+              inputmode={f.type === 'tel' ? 'tel' : f.type === 'email' ? 'email' : undefined}
+              spellcheck={f.type === 'email' ? 'false' : undefined}
+            />
+          )}
+        </>
+      )}
+      <p class="err" id={`${f.name}-error`} role="alert"></p>
+    </div>
+  ))}
+
+  <!-- spam trap: people never see or fill this -->
+  <div class="hp" inert>
+    <label for="company">Leave this empty</label>
+    <input type="text" id="company" name="company" autocomplete="off" />
+  </div>
+
+  <button class="pill" type="submit">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+    <span class="label">Send response</span>
+  </button>
+  <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+</form>
+
+<div class="thanks" id="thanks" hidden>
+  <h3 tabindex="-1" id="thanksTitle"></h3>
+  <p id="thanksBody"></p>
+  <button class="ghost" type="button" id="again">Change or send another reply</button>
+</div>
