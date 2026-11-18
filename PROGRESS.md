@@ -15,7 +15,10 @@
 - Flower repos (nonflowers, @nbot/flowers, svg-plant, vector-bloom) are inactive or don't match the style. The existing art was kept and baked.
 
 **Open**
-- [ ] Choose where RSVPs go (Formspree is the quickest) and set `PUBLIC_RSVP_ENDPOINT`.
+- [x] Formspree endpoint set (GitHub variable + Vercel env, all environments).
+- [x] Live on Vercel: https://wedding-rsvp-ruby-tau.vercel.app (project `wedding-rsvp`).
+- [ ] Send one test RSVP and confirm it in the Formspree email.
+- [ ] Optional: `vercel git connect` so every push to main redeploys.
 - [ ] Fill in the venue, hotels, bank details and the "Are children welcome?" answer in `src/config/wedding.ts`.
 - [ ] Update local Node to 22.23.4 or newer (Astro 7.4.12 needs it).
-- [ ] Turn on GitHub Pages (Settings → Pages → Source: GitHub Actions), then commit and push.
+- [ ] GitHub Actions is blocked by a GitHub billing lock. Fix billing, or disable `.github/workflows/deploy.yml`, if Vercel is the host.
